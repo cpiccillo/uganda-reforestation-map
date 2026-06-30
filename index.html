@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uganda Reforestation Map — The Trees Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --soil:        #6b3a1f;   /* red ugandan earth */
+    --soil-deep:   #3d1f10;
+    --leaf:        #4a7c4e;   /* foliage green */
+    --leaf-bright: #7fb069;
+    --bg:          #1a1410;   /* dark warm ground */
+    --bg-soft:     #241b14;
+    --paper:       #f3ede4;   /* light text */
+    --paper-dim:   #b9aa98;
+    --line:        rgba(243,237,228,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { background: var(--bg); color: var(--paper); font-family: 'Inter', sans-serif; }
+
+  body { min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem);
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .eyebrow {
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--leaf-bright);
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+  }
+
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.2rem;
+    max-width: 16ch;
+  }
+
+  .hero h1 .accent { color: var(--leaf-bright); }
+
+  .lede {
+    font-size: clamp(1rem, 2vw, 1.18rem);
+    line-height: 1.6;
+    color: var(--paper-dim);
+    max-width: 60ch;
+    margin-bottom: 2.4rem;
+  }
+
+  /* ---------- STATS (the real field numbers, as proof) ---------- */
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(1.5rem, 5vw, 3.5rem);
+    padding-top: 1.8rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .stat .num {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    line-height: 1;
+    color: var(--paper);
+  }
+
+  .stat .lbl {
+    font-size: 0.82rem;
+    color: var(--paper-dim);
+    margin-top: 0.45rem;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- MAP ---------- */
+  .map-wrap {
+    flex: 1;
+    min-height: 60vh;
+    margin: clamp(1.5rem, 4vw, 2.5rem) clamp(1.5rem, 5vw, 4rem) 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--bg-soft);
+    max-width: 1100px;
+    width: calc(100% - clamp(3rem, 10vw, 8rem));
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .map-wrap iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 60vh;
+    border: 0;
+    display: block;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 5vw, 4rem);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem 2.5rem;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.88rem;
+    color: var(--paper-dim);
+  }
+
+  footer a { color: var(--leaf-bright); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+  footer a:hover { border-bottom-color: var(--leaf-bright); }
+
+  .credits { line-height: 1.7; }
+
+  @media (max-width: 600px) {
+    .map-wrap { width: calc(100% - 3rem); }
+  }
+</style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="eyebrow">The Trees Project · West Nile, Uganda</div>
+    <h1>Mapping a reforestation, <span class="accent">tree by tree</span>.</h1>
+    <p class="lede">
+      Every point on this map is a real planting site in northern Uganda, surveyed on the ground
+      with GPS. Open any site to see who tends it, which species grow there, and how the trees
+      are doing. The data comes from the field — collected for the NGO Amici di Angal OdV.
+    </p>
+
+    <div class="stats">
+      <div class="stat"><div class="num">132</div><div class="lbl">planting sites</div></div>
+      <div class="stat"><div class="num">32,319</div><div class="lbl">trees</div></div>
+      <div class="stat"><div class="num">11</div><div class="lbl">species</div></div>
+      <div class="stat"><div class="num">7</div><div class="lbl">sub-counties</div></div>
+      <div class="stat"><div class="num">May 2026</div><div class="lbl">field survey</div></div>
+    </div>
+  </header>
+
+  <main class="map-wrap">
+    <iframe src="map.html" title="Interactive map of reforestation sites in northern Uganda" loading="lazy"></iframe>
+  </main>
+
+  <footer>
+    <div class="credits">
+      Data: Amici di Angal OdV — The Trees Project<br>
+      Basemaps: Esri World Imagery, OpenTopoMap · Built with QGIS &amp; Leaflet
+    </div>
+    <div>
+      <a href="https://github.com/cpiccillo/uganda-reforestation-map">View on GitHub →</a>
+    </div>
+  </footer>
+
+</body>
+</html>
