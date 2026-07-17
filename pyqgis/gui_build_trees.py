@@ -50,14 +50,14 @@ class BuildTreesDataset(QgsProcessingAlgorithm):
         dem = self.parameterAsRasterLayer(parameters, self.DEM, context)
         feedback.pushInfo(f"CSV: {csv_path} | threshold: {threshold} | DEM: {'yes' if dem else 'no'}")
 
-        # --- 1. LOAD CSV AS POINT LAYER ------------------------------------
+        # --- 1. LOAD CSV AS POINT LAYER ---
         uri = f"file:///{csv_path}?delimiter=,&xField=gps_lon&yField=gps_lat&crs=EPSG:4326"
         csv_layer = QgsVectorLayer(uri, "trees_csv", "delimitedtext")
         if not csv_layer.isValid():
             raise QgsProcessingException("CSV failed to load. Check path/columns.")
         feedback.pushInfo(f"CSV loaded: {csv_layer.featureCount()} features")
 
-        # --- 2. SAVE AS GEOPACKAGE (overwrite) -----------------------------
+        # --- 2. SAVE AS GEOPACKAGE (overwrite) ---
         options = QgsVectorFileWriter.SaveVectorOptions()
         options.driverName = "GPKG"
         options.layerName = GPKG_LAYER
@@ -69,7 +69,7 @@ class BuildTreesDataset(QgsProcessingAlgorithm):
         if not layer.isValid():
             raise QgsProcessingException("GeoPackage layer failed to load.")
 
-        # --- 3. CREATE ANALYSIS FIELDS -------------------------------------
+        # --- 3. CREATE ANALYSIS FIELDS ---
         new_fields = [
             QgsField("n_species", QVariant.Int),
             QgsField("max_trees", QVariant.Int),
@@ -106,7 +106,7 @@ class BuildTreesDataset(QgsProcessingAlgorithm):
             dem_provider = dem.dataProvider()
             to_dem = QgsCoordinateTransform(layer.crs(), dem.crs(), QgsProject.instance())
 
-        # --- 4. CALCULATE + COLLECT IDs BELOW THRESHOLD --------------------
+        # --- 4. CALCULATE + COLLECT IDs BELOW THRESHOLD ---
         to_delete = []
         for feat in layer.getFeatures():
             counts = {f: val(feat, f) for f in SPECIES_FIELDS}
@@ -143,13 +143,13 @@ class BuildTreesDataset(QgsProcessingAlgorithm):
             if total_trees < threshold:
                 to_delete.append(feat.id())
 
-        # --- 5. APPLY THE FILTER -------------------------------------------
+        # --- 5. APPLY THE FILTER ---
         if to_delete:
             layer.deleteFeatures(to_delete)
         layer.commitChanges()
         feedback.pushInfo(f"Kept {layer.featureCount()} sites with total_trees >= {threshold}")
 
-        # --- 6. ADD TO PROJECT ---------------------------------------------
+        # --- 6. ADD TO PROJECT ---
         for lyr in QgsProject.instance().mapLayersByName(GPKG_LAYER):
             QgsProject.instance().removeMapLayer(lyr)
         QgsProject.instance().addMapLayer(layer)
@@ -171,7 +171,7 @@ class BuildTreesDataset(QgsProcessingAlgorithm):
     def createInstance(self):
         return BuildTreesDataset()
 
-# --- REGISTER (re-runnable) -------------------------------------------------
+# --- REGISTER (re-runnable) ---
 class TreesProjectProvider(QgsProcessingProvider):
     def loadAlgorithms(self):
         self.addAlgorithm(BuildTreesDataset())
