@@ -118,7 +118,7 @@ for feat in layer.getFeatures():
     # site_status by coordinate match against November
     k = coord_key(feat)
     if k is None:
-        status = None                      # row without valid coordinates
+        status = None # row without valid coordinates
     elif k in nov_keys:
         status = "Existing"
     else:
