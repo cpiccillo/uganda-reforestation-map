@@ -1,5 +1,5 @@
 """
-The Trees Project (Uganda) - PyQGIS | Carlo Piccillo
+The Trees Project (Uganda) - PyQGIS - Carlo Piccillo
 Processing tool (GUI): the same pipeline as build_trees_dataset, exposed as a
 QGIS Processing algorithm with parameters - source CSV, a minimum-trees filter
 for the Atlas, and optional elevation sampling from a DEM.
@@ -29,7 +29,6 @@ SPECIES_CLEAN = {
     "Sour soup": "Soursop", "Cocoa": "Cocoa",
 }
 SPECIES_FIELDS = list(SPECIES_CLEAN.keys())
-
 
 class BuildTreesDataset(QgsProcessingAlgorithm):
 
@@ -172,7 +171,6 @@ class BuildTreesDataset(QgsProcessingAlgorithm):
     def createInstance(self):
         return BuildTreesDataset()
 
-
 # --- REGISTER (re-runnable) -------------------------------------------------
 class TreesProjectProvider(QgsProcessingProvider):
     def loadAlgorithms(self):
@@ -181,7 +179,6 @@ class TreesProjectProvider(QgsProcessingProvider):
         return 'trees_project'
     def name(self):
         return 'The Trees Project'
-
 
 reg = QgsApplication.processingRegistry()
 existing = reg.providerById('trees_project')
