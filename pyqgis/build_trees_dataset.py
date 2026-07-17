@@ -1,5 +1,5 @@
 """
-The Trees Project (Uganda) - PyQGIS automation | Carlo Piccillo
+The Trees Project (Uganda) - PyQGIS automation - Carlo Piccillo
 End-to-end script: load the source CSV -> save it as a GeoPackage ->
 create and calculate the analysis fields -> add the result to the QGIS project.
 Re-run this whenever a new monitoring dataset arrives.
@@ -9,7 +9,7 @@ from qgis.core import (QgsVectorLayer, QgsVectorFileWriter, QgsProject,
                        QgsField, QgsCoordinateTransformContext)
 from qgis.PyQt.QtCore import QVariant
 
-# --- 1. PARAMETERS ---------------------------------------------------------
+# --- 1. PARAMETERS ---
 # Set BASE to the folder that holds the dataset, then keep the file name below.
 BASE = "path/to/data/"
 csv_path = BASE + "Green Project Dataset May 2026.xlsx - Sheet1.csv"
@@ -26,14 +26,14 @@ species_clean = {
 }
 species_fields = list(species_clean.keys())
 
-# --- 2. LOAD CSV AS POINT LAYER --------------------------------------------
+# --- 2. LOAD CSV AS POINT LAYER ---
 uri = f"file:///{csv_path}?delimiter=,&xField=gps_lon&yField=gps_lat&crs=EPSG:4326"
 csv_layer = QgsVectorLayer(uri, "trees_csv", "delimitedtext")
 if not csv_layer.isValid():
     raise Exception("CSV layer failed to load. Check the path and column names.")
 print("CSV loaded:", csv_layer.featureCount(), "features")
 
-# --- 3. SAVE AS GEOPACKAGE (writable, overwrites existing) ------------------
+# --- 3. SAVE AS GEOPACKAGE (writable, overwrites existing) ---
 options = QgsVectorFileWriter.SaveVectorOptions()
 options.driverName = "GPKG"
 options.layerName = gpkg_layer_name
@@ -47,7 +47,7 @@ layer = QgsVectorLayer(f"{gpkg_path}|layername={gpkg_layer_name}", gpkg_layer_na
 if not layer.isValid():
     raise Exception("GeoPackage layer failed to load.")
 
-# --- 4. CREATE ANALYSIS FIELDS ---------------------------------------------
+# --- 4. CREATE ANALYSIS FIELDS ---
 new_fields = [
     QgsField("n_species", QVariant.Int),
     QgsField("max_trees", QVariant.Int),
@@ -77,7 +77,7 @@ def val(feat, field):
     except (TypeError, ValueError):
         return 0
 
-# --- 5. CALCULATE FIELD VALUES ---------------------------------------------
+# --- 5. CALCULATE FIELD VALUES ---
 for feat in layer.getFeatures():
     counts = {f: val(feat, f) for f in species_fields}
     n_species = sum(1 for c in counts.values() if c > 0)
@@ -103,7 +103,7 @@ for feat in layer.getFeatures():
 
 layer.commitChanges()
 
-# --- 6. ADD TO PROJECT ------------------------------------------------------
+# --- 6. ADD TO PROJECT ---
 # Remove any existing layer with the same name first (avoid duplicates)
 for lyr in QgsProject.instance().mapLayersByName(gpkg_layer_name):
     QgsProject.instance().removeMapLayer(lyr)
