@@ -1,5 +1,5 @@
 """
-The Trees Project (Uganda) - PyQGIS automation | Carlo Piccillo
+The Trees Project (Uganda) - PyQGIS automation - Carlo Piccillo
 EXPANSION MAP: load the May 2026 dataset (current full state) -> tag each site as
 "Existing" (coordinates already present in Nov 2025) or "New" -> save as a
 GeoPackage with the usual analysis fields + site_status -> add to the project.
@@ -12,7 +12,7 @@ from qgis.core import (QgsVectorLayer, QgsVectorFileWriter, QgsProject,
                        QgsField, QgsCoordinateTransformContext)
 from qgis.PyQt.QtCore import QVariant
 
-# --- 1. PARAMETERS ---------------------------------------------------------
+# --- 1. PARAMETERS ---
 # Set BASE to the folder that holds both datasets.
 BASE = "path/to/data/"
 nov_csv = BASE + "Green Project Dataset Nov 2025.xlsx - Sheet1.csv"
@@ -32,7 +32,7 @@ species_clean = {
 }
 species_fields = list(species_clean.keys())
 
-# --- 2. BUILD THE SET OF NOVEMBER COORDINATES ------------------------------
+# --- 2. BUILD THE SET OF NOVEMBER COORDINATES ---
 # We load Nov only to learn which coordinates already existed.
 nov_uri = f"file:///{nov_csv}?delimiter=,&xField=gps_lon&yField=gps_lat&crs=EPSG:4326"
 nov_layer = QgsVectorLayer(nov_uri, "nov_tmp", "delimitedtext")
@@ -49,14 +49,14 @@ def coord_key(feat):
 nov_keys = set(filter(None, (coord_key(f) for f in nov_layer.getFeatures())))
 print("November coordinate keys:", len(nov_keys))
 
-# --- 3. LOAD MAY CSV AS POINT LAYER (current full state) -------------------
+# --- 3. LOAD MAY CSV AS POINT LAYER (current full state) ---
 may_uri = f"file:///{may_csv}?delimiter=,&xField=gps_lon&yField=gps_lat&crs=EPSG:4326"
 may_layer = QgsVectorLayer(may_uri, "may_tmp", "delimitedtext")
 if not may_layer.isValid():
     raise Exception("May CSV failed to load. Check path and column names.")
 print("May loaded:", may_layer.featureCount(), "features")
 
-# --- 4. SAVE AS GEOPACKAGE (writable, overwrites existing) -----------------
+# --- 4. SAVE AS GEOPACKAGE (writable, overwrites existing) ---
 options = QgsVectorFileWriter.SaveVectorOptions()
 options.driverName = "GPKG"
 options.layerName = gpkg_layer_name
@@ -69,7 +69,7 @@ layer = QgsVectorLayer(f"{gpkg_path}|layername={gpkg_layer_name}", gpkg_layer_na
 if not layer.isValid():
     raise Exception("GeoPackage layer failed to load.")
 
-# --- 5. CREATE ANALYSIS FIELDS + site_status -------------------------------
+# --- 5. CREATE ANALYSIS FIELDS + site_status ---
 new_fields = [
     QgsField("n_species", QVariant.Int),
     QgsField("max_trees", QVariant.Int),
@@ -100,7 +100,7 @@ def val(feat, field):
     except (TypeError, ValueError):
         return 0
 
-# --- 6. CALCULATE FIELD VALUES ---------------------------------------------
+# --- 6. CALCULATE FIELD VALUES ---
 for feat in layer.getFeatures():
     counts = {f: val(feat, f) for f in species_fields}
     n_species = sum(1 for c in counts.values() if c > 0)
@@ -133,12 +133,12 @@ for feat in layer.getFeatures():
 
 layer.commitChanges()
 
-# --- 7. ADD TO PROJECT ------------------------------------------------------
+# --- 7. ADD TO PROJECT ---
 for lyr in QgsProject.instance().mapLayersByName(gpkg_layer_name):
     QgsProject.instance().removeMapLayer(lyr)
 QgsProject.instance().addMapLayer(layer)
 
-# --- 8. SUMMARY ------------------------------------------------------------
+# --- 8. SUMMARY ---
 new = sum(1 for f in layer.getFeatures() if f["site_status"] == "New")
 ex = sum(1 for f in layer.getFeatures() if f["site_status"] == "Existing")
 none = sum(1 for f in layer.getFeatures() if f["site_status"] is None)
