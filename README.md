@@ -36,6 +36,27 @@ The map is a static Leaflet site generated from a QGIS project:
 
 Coordinate reference systems: source data in EPSG:4326 (WGS 84); web map in EPSG:3857 (Web Mercator).
 
+## Automation (`pyqgis/`)
+
+The map shows the *result*, but the data behind it doesn't clean itself. Every
+survey arrives as a raw spreadsheet - one row per site, one column per species -
+and turning that into analysis-ready spatial data by hand, every time, is slow
+and easy to get wrong. So I automated it with PyQGIS.
+
+The `pyqgis/` folder holds three scripts. Each one takes the raw CSV, writes a
+clean GeoPackage, and derives the fields the map relies on (number of species,
+dominant species, total trees, monoculture / polyculture):
+
+- **`build_trees_dataset.py`** - the core script. CSV in, analysis-ready layer
+  out. Re-run it whenever a new survey arrives.
+- **`gui_build_trees.py`** - the same pipeline wrapped as a QGIS Processing tool,
+  so it runs from a dialog: pick the CSV, set a minimum-trees threshold for the
+  map series, optionally sample elevation from a DEM.
+- **`build_expansion_map.py`** - compares two surveys (November 2025 and May
+  2026) and tags each site as *Existing* or *New* by matching coordinates. An
+  honest before/after of where the project grew - a map of expansion, not a
+  survival rate.
+
 ## Repository contents
 
 ```
@@ -45,6 +66,7 @@ js/               - Leaflet and supporting libraries
 css/              - styles and marker assets
 legend/           - legend graphics
 webfonts/         - icon fonts
+pyqgis/       - PyQGIS automation scripts
 ```
 
 ## About me
