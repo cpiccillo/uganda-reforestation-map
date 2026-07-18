@@ -66,7 +66,7 @@ js/               - Leaflet and supporting libraries
 css/              - styles and marker assets
 legend/           - legend graphics
 webfonts/         - icon fonts
-pyqgis/       - PyQGIS automation scripts
+pyqgis/           - PyQGIS automation scripts
 ```
 
 ## About me
